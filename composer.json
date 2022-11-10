@@ -1,6 +1,7 @@
 {
     "name": "localtests/yandextrackersdk",
     "description": "SDK for Yandex Tracker",
+    "version": "1.0.0",
     "autoload": {
         "psr-4": {
             "Localtests\\Yandextrackersdk\\": "src/"
