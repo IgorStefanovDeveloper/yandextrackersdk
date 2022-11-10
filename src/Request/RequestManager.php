@@ -108,7 +108,7 @@ final class RequestManager implements RequestInterface
             throw new UnauthorizedException($content['errorMessages'][0]);
         }
 
-        throw new RuntimeException($response->getStatusCode() . ' ' . $response->getContent(false));
+        throw new RuntimeException($response->getStatusCode() . ' ' . $response->getBody(false));
     }
 }
 
