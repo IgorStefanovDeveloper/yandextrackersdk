@@ -79,13 +79,11 @@ final class TaskManager implements TaskManagerInterface
     {
         return $this->requestManager->post('/v2/issues/', $params);
     }
-
 }
 
 /*
  * TODO
  * https://yandex.ru/dev/connect/tracker/api/concepts/issues/patch-issue.html
- *
  * https://yandex.ru/dev/connect/tracker/api/concepts/issues/move-issue.html
  * https://yandex.ru/dev/connect/tracker/api/concepts/issues/search-issues.html
  * https://yandex.ru/dev/connect/tracker/api/concepts/issues/search-release.html

@@ -3,12 +3,12 @@
 namespace Localtests\Yandextrackersdk\Task;
 
 use Localtests\Yandextrackersdk\Employee\Employee;
+use Localtests\Yandextrackersdk\Environment\SerializableObj;
 use DateTime;
+use Localtests\Yandextrackersdk\Queue\Queue;
 
-class Task
+class Task extends SerializableObj
 {
-    private string $self;
-    private string $id;
     private string $key;
     private int $version;
     private string $summary;
@@ -19,44 +19,61 @@ class Task
     private Employee $createdBy;
     private DateTime $updatedAt;
     private ?Employee $assignee;
-    public function __construct(array $params = []){
+    private TaskType $type;
+    private TaskStatus $status;
+    private TaskPriority $priority;
+    private int $votes;
+    private Queue $queue;
 
+    public function __construct(array $params = [])
+    {
+        $this->createTask($params);
     }
-    /**
-     * TODO
-     *
-     * private ?Employee $assignee;
-     *
-     * type Array
-     * (
-     * [self] => https://api.tracker.yandex.net/v2/issuetypes/2
-     * [id] => 2
-     * [key] => task
-     * [display] => Задача
-     * )
-     * priority Array
-     * (
-     * [self] => https://api.tracker.yandex.net/v2/priorities/3
-     * [id] => 3
-     * [key] => normal
-     * [display] => Средний
-     * )
-     * commentWithoutExternalMessageCount ??
-     * votes int
-     * queue Array
-     * (
-     * [self] => https://api.tracker.yandex.net/v2/queues/ORG
-     * [id] => 1
-     * [key] => ORG
-     * [display] => org-igor-programm
-     * )
-     * status Array
-     * (
-     * [self] => https://api.tracker.yandex.net/v2/statuses/1
-     * [id] => 1
-     * [key] => open
-     * [display] => Открыт
-     * )
-     * favorite false
-     */
+
+    public function createTask(array $params = []): Task
+    {
+        foreach ($params as $key => $param) {
+            $this->$key = $param;
+        }
+
+        return $this;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        $resultArray = [];
+
+        foreach (get_object_vars($this) as $key => $var) {
+            if (isset($var)) {
+                if (is_subclass_of($var, 'SerializableObj')) {
+                    /**
+                     * SerializableObj $var
+                     */
+                    $resultArray[$key] = $var->jsonSerialize();
+                } else {
+                    $resultArray[$key] = $var;
+                }
+            }
+        }
+
+        return $resultArray;
+    }
+
+    public function getSummery(): string
+    {
+        return $this->summary;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+
+    public function getAssignee(): Employee
+    {
+        return $this->assignee;
+    }
+
+
 }
