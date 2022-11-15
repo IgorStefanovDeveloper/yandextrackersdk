@@ -10,7 +10,7 @@ interface TaskManagerInterface
 
     public function deleteTask();
 
-    public function editTask();
+    public function editTask(string $key, array $params = []): array;
 
     public function getTaskCount($params = []);
 }

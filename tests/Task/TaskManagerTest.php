@@ -3,6 +3,7 @@
 namespace Localtests\Yandextrackersdk\Test\Task;
 
 use Localtests\Yandextrackersdk\Employee\Employee;
+use Localtests\Yandextrackersdk\Queue\Queue;
 use Localtests\Yandextrackersdk\Task\Task;
 use Localtests\Yandextrackersdk\Task\TaskManager;
 use Localtests\Yandextrackersdk\Request\RequestManager;
@@ -54,12 +55,15 @@ final class TaskManagerTest extends TestCase
     public function testCreateTask()
     {
         //Создать задачу с заголовком, описанием и испольнителем.
-        $assignee = new Employee([getenv('EMPLOYEE_ID'), getenv('EMPLOYEE_SELF'), 'display' => getenv('EMPLOYEE_DISPLAY')]);
+        $assignee = new Employee(['id' => getenv('EMPLOYEE_ID'), 'self' => getenv('EMPLOYEE_SELF'), 'display' => getenv('EMPLOYEE_DISPLAY')]);
+
+        $queue = new Queue(["key" => getenv('QUEUE_KEY')]);
 
         $taskData = [
             'summary' => 'exampleSummary',
             'description' => 'description',
-            'assignee' => $assignee
+            'assignee' => $assignee,
+            'queue' => $queue
         ];
 
         $task = new Task($taskData);
@@ -67,6 +71,67 @@ final class TaskManagerTest extends TestCase
         $this->assertEquals($task->getSummery(), $taskData['summary'], 'В созданном объекте некоректные данные');
         $this->assertEquals($task->getDescription(), $taskData['description'], 'В созданном объекте некоректные данные');
         $this->assertEquals($task->getAssignee()->jsonSerialize(), $taskData['assignee']->jsonSerialize(), 'В созданном объекте некоректные данные');
+        $this->assertEquals($task->getQueue()->jsonSerialize(), $taskData['queue']->jsonSerialize(), 'В созданном объекте некоректные данные');
 
+        $jsonTask = json_encode($task->jsonSerialize());
+        $this->assertIsString($jsonTask, 'Неполучилось сформировать json тело для создания задачи');
+
+        //Тест создает новую задачу
+        if (false) {
+            $result = $this->taskManager->createTask($task->jsonSerialize());
+
+            $this->assertIsArray($result, 'Не получилось создать задачу');
+        }
+    }
+
+    public function testEditTask()
+    {
+        $issueKey = getenv('ISSUE_ID');
+
+        $taskData = [
+            'summary' => 'exampleSummary from testEditTask',
+            'description' => 'description from testEditTask',
+        ];
+
+        $task = new Task($taskData);
+
+        $task = $this->taskManager->editTask($issueKey, $task->jsonSerialize());
+
+        $this->assertIsArray($task, 'Не изменить задачу');
+        $this->assertEquals($taskData['summary'], $task['summary']);
+        $this->assertEquals($taskData['description'], $task['description']);
+    }
+
+    public function testMoveTaskToQueue()
+    {
+        $issueKey = getenv('ISSUE_ID');
+        $queueKey = getenv('QUEUE_KEY');
+        $queueKeyForMove = getenv('QUEUE_KEY_MOVE');
+
+        $moveTo = $this->taskManager->moveTaskToQueue($issueKey, $queueKeyForMove);
+
+        $this->assertIsArray($moveTo, 'Не удалось переместить задачу');
+        $this->assertEquals($moveTo['previousQueue']['key'], $queueKey);
+
+        $moveBack = $this->taskManager->moveTaskToQueue($moveTo['key'], $queueKey);
+
+        $this->assertIsArray($moveBack, 'Не удалось переместить задачу');
+        $this->assertEquals($moveBack['key'], $issueKey);
+    }
+
+    public function testGetTaskTransitions()
+    {
+        $issueKey = getenv('ISSUE_ID');
+
+        $transitions = $this->taskManager->getTaskTransitions($issueKey);
+
+        $this->assertIsArray($transitions, 'Не удалось получить переходы задачи');
+    }
+
+    public function testGetTaskPriorities()
+    {
+        $prioritises = $this->taskManager->getTaskPriorities();
+
+        $this->assertIsArray($prioritises, 'Не удалось получить приоритеты задач');
     }
 }

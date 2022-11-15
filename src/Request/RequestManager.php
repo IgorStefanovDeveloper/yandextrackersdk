@@ -3,6 +3,7 @@
 namespace Localtests\Yandextrackersdk\Request;
 
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\RequestOptions;
 use Localtests\Yandextrackersdk\Exception\ForbiddenException;
 use Localtests\Yandextrackersdk\Exception\UnauthorizedException;
 use GuzzleHttp\ClientInterface;
@@ -76,15 +77,12 @@ final class RequestManager implements RequestInterface
      */
     public function request(string $method, string $uri, array $options = [])
     {
-        $options = array_merge_recursive(
-            [
-                'headers' => [
-                    self::AUTHORIZATION => 'OAuth ' . $this->authToken,
-                    self::X_ORG_ID => $this->orgId
-                ]
-            ],
-            $options
-        );
+        $options = array_merge([
+            RequestOptions::HEADERS => [
+                self::AUTHORIZATION => 'OAuth ' . $this->authToken,
+                self::X_ORG_ID => $this->orgId
+            ]
+        ], $options);
 
         $response = $this->client->request(
             $method,

@@ -29,18 +29,18 @@
     {
       "type": "package",
       "package": {
+        "autoload": {
+          "psr-4": {
+            "Localtests\\Yandextrackersdk\\": "src/"
+          }
+        },
         "name": "localtests/yandextrackersdk",
-        "version": "1.0.0",
         "sourse": {
           "type": "gitlab",
           "url": "https://gitlab.com/localtests/yandextrackersdk",
           "reference": "master"
         },
-        "autoload": {
-          "psr-4": {
-            "Localtests\\Yandextrackersdk\\": "src/"
-          }
-        }
+        "version": "1.0.0"
       }
     }
   ]

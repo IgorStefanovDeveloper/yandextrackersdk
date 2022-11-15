@@ -45,7 +45,7 @@ class Task extends SerializableObj
 
         foreach (get_object_vars($this) as $key => $var) {
             if (isset($var)) {
-                if (is_subclass_of($var, 'SerializableObj')) {
+                if (is_object($var)) {
                     /**
                      * SerializableObj $var
                      */
@@ -75,5 +75,11 @@ class Task extends SerializableObj
         return $this->assignee;
     }
 
-
+    /**
+     * @return Queue
+     */
+    public function getQueue(): Queue
+    {
+        return $this->queue;
+    }
 }
