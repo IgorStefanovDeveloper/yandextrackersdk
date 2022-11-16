@@ -2,7 +2,12 @@
 
 namespace Localtests\Yandextrackersdk\Task;
 
-class TaskStatus
-{
+use Localtests\Yandextrackersdk\Environment\SerializableObj;
 
+class TaskStatus extends SerializableObj
+{
+    public function jsonSerialize(): mixed
+    {
+        return get_object_vars($this);
+    }
 }

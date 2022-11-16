@@ -26,7 +26,7 @@ final class TaskManagerTest extends TestCase
 
     public function testGetTaskCount()
     {
-        $this->assertGreaterThan(0, $this->taskManager->getTaskCount(), 'Не получилось получить количество задач'); // больше чем
+        $this->assertGreaterThan(0, $this->taskManager->getTaskCount(), 'Не получилось получить количество задач');
     }
 
     public function testGetTaskByKey()
@@ -52,6 +52,7 @@ final class TaskManagerTest extends TestCase
         $this->assertIsArray($links, 'Не получилось получить ссылки задачи');
     }
 
+    /*
     public function testCreateTask()
     {
         //Создать задачу с заголовком, описанием и испольнителем.
@@ -83,23 +84,24 @@ final class TaskManagerTest extends TestCase
             $this->assertIsArray($result, 'Не получилось создать задачу');
         }
     }
+    */
 
     public function testEditTask()
     {
         $issueKey = getenv('ISSUE_ID');
 
         $taskData = [
-            'summary' => 'exampleSummary from testEditTask',
-            'description' => 'description from testEditTask',
+            'summary' => 'exampleSummary from testEditTask11',
+            'description' => 'description from testEditTask11',
         ];
 
         $task = new Task($taskData);
 
         $task = $this->taskManager->editTask($issueKey, $task->jsonSerialize());
 
-        $this->assertIsArray($task, 'Не изменить задачу');
-        $this->assertEquals($taskData['summary'], $task['summary']);
-        $this->assertEquals($taskData['description'], $task['description']);
+        $this->assertIsArray($task, 'Не получилось изменить задачу');
+        $this->assertEquals($taskData['summary'], $task['summary'], 'Не получилось изменить задачу');
+        $this->assertEquals($taskData['description'], $task['description'], 'Не получилось изменить задачу');
     }
 
     public function testMoveTaskToQueue()

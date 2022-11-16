@@ -6,16 +6,7 @@ use Localtests\Yandextrackersdk\Environment\SerializableObj;
 
 final class Employee extends SerializableObj
 {
-    private string $display;
-
-    public function __construct(array $params = [])
-    {
-        if (is_array($params)) {
-            if (isset($params['self'])) $this->setSelf($params['self']);
-            if (isset($params['id'])) $this->setId($params['id']);
-            if (isset($params['display'])) $this->display = $params['display'];
-        }
-    }
+    protected string $display;
 
     public function getDisplay(): string
     {

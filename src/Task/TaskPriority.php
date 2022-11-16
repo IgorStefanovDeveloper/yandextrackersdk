@@ -2,8 +2,14 @@
 
 namespace Localtests\Yandextrackersdk\Task;
 
-class TaskPriority
+use Localtests\Yandextrackersdk\Environment\SerializableObj;
+
+class TaskPriority extends SerializableObj
 {
+    public function jsonSerialize(): mixed
+    {
+        return get_object_vars($this);
+    }
 /**
  * Array
 (

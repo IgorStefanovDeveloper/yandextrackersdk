@@ -12,4 +12,15 @@ abstract class SerializableObj implements JsonSerializable
     use SelfTrait;
 
     abstract function jsonSerialize(): mixed;
+
+    public function __construct(array $params = [])
+    {
+        $this->init($params);
+    }
+
+    public function init(array $params){
+        foreach ($params as $key => $param){
+            $this->$key = $param;
+        }
+    }
 }

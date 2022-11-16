@@ -9,7 +9,7 @@ use Localtests\Yandextrackersdk\Exception\UnauthorizedException;
 use GuzzleHttp\ClientInterface;
 use RuntimeException;
 
-final class RequestManager implements RequestInterface
+class RequestManager implements RequestInterface
 {
     public const BASE_PATH = 'https://api.tracker.yandex.net';
 

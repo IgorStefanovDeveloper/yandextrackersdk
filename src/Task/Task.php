@@ -9,31 +9,46 @@ use Localtests\Yandextrackersdk\Queue\Queue;
 
 class Task extends SerializableObj
 {
-    private string $key;
-    private int $version;
-    private string $summary;
-    private DateTime $statusStartTime;
-    private ?Employee $updatedBy;
-    private ?string $description = null;
-    private DateTime $createdAt;
-    private Employee $createdBy;
-    private DateTime $updatedAt;
-    private ?Employee $assignee;
-    private TaskType $type;
-    private TaskStatus $status;
-    private TaskPriority $priority;
-    private int $votes;
-    private Queue $queue;
+    protected string $key;
+    protected int $version;
+    protected string $summary;
+    protected DateTime $statusStartTime;
+    protected ?Employee $updatedBy;
+    protected ?string $description = null;
+    protected DateTime $createdAt;
+    protected Employee $createdBy;
+    protected DateTime $updatedAt;
+    protected ?Employee $assignee;
+    protected TaskType $type;
+    protected TaskStatus $status;
+    protected TaskPriority $priority;
+    protected int $votes;
+    protected Queue $queue;
 
     public function __construct(array $params = [])
     {
-        $this->createTask($params);
+        $this->updatedBy = new Employee();
+        $this->assignee = new Employee();
+        $this->queue = new Queue();
+        $this->type = new TaskType();
+        $this->status = new TaskStatus();
+        $this->priority = new TaskPriority();
+
+        parent::__construct($params);
     }
 
-    public function createTask(array $params = []): Task
+    public function init(array $params = []): Task
     {
+        $objectKey = ['updatedBy', 'createdAt', 'createdBy', 'updatedAt', 'assignee', 'type', 'status', 'priority', 'queue'];
         foreach ($params as $key => $param) {
-            $this->$key = $param;
+            if (in_array($key, $objectKey)) {
+                /**
+                 * SerializableObj $var
+                 */
+                $this->$key->init($param);
+            } else {
+                $this->$key = $param;
+            }
         }
 
         return $this;
@@ -49,7 +64,10 @@ class Task extends SerializableObj
                     /**
                      * SerializableObj $var
                      */
-                    $resultArray[$key] = $var->jsonSerialize();
+                    $arr = $var->jsonSerialize();
+                    if (!empty($arr)) {
+                        $resultArray[$key] = $var->jsonSerialize();
+                    }
                 } else {
                     $resultArray[$key] = $var;
                 }

@@ -6,8 +6,8 @@ use Localtests\Yandextrackersdk\Environment\SerializableObj;
 
 class Queue extends SerializableObj
 {
-    private string $key;
-    private string $display;
+    protected string $key;
+    protected string $display;
 
     public function __construct(array $params = [])
     {
