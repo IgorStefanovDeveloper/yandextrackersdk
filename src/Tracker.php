@@ -2,14 +2,19 @@
 
 namespace Localtests\Yandextrackersdk;
 
+use GuzzleHttp\Client;
+use Localtests\Yandextrackersdk\Request\RequestManager;
+use Localtests\Yandextrackersdk\Task\TaskManager;
 use Localtests\Yandextrackersdk\Task\TaskManagerInterface;
 
 final class Tracker
 {
-    private TaskManagerInterface $taskManager;
+    public TaskManagerInterface $taskManager;
 
-    public function __construct(TaskManagerInterface $taskManager)
+    public function __construct(string $token, string $orgId)
     {
-        $this->taskManager = $taskManager;
+        $client = new Client();
+        $requestManager = new RequestManager($client, $token, $orgId);
+        $this->taskManager = new TaskManager($requestManager);
     }
 }

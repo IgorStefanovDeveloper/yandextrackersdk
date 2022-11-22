@@ -25,27 +25,43 @@ class Task extends SerializableObj
     protected int $votes;
     protected Queue $queue;
 
+    private const OBJ_KEY = ['updatedBy', 'createdBy', 'assignee', 'type', 'status', 'priority', 'queue'];
+    private const DATA_KEY = ['statusStartTime', 'createdAt', 'updatedAt'];
+
     public function __construct(array $params = [])
     {
         $this->updatedBy = new Employee();
+        $this->createdBy = new Employee();
         $this->assignee = new Employee();
         $this->queue = new Queue();
         $this->type = new TaskType();
         $this->status = new TaskStatus();
         $this->priority = new TaskPriority();
 
+        $this->statusStartTime = new DateTime();
+        $this->createdAt = new DateTime();
+        $this->updatedAt = new DateTime();
         parent::__construct($params);
     }
 
     public function init(array $params = []): Task
     {
-        $objectKey = ['updatedBy', 'createdAt', 'createdBy', 'updatedAt', 'assignee', 'type', 'status', 'priority', 'queue'];
+        $objectKey = ['updatedBy', 'createdBy', 'assignee', 'type', 'status', 'priority', 'queue'];
+
+        $dataKey = ['statusStartTime', 'createdAt', 'updatedAt'];
+
         foreach ($params as $key => $param) {
-            if (in_array($key, $objectKey)) {
+
+            if (in_array($key, self::OBJ_KEY)) {
                 /**
-                 * SerializableObj $var
+                 * SerializableObj $this->$key
                  */
                 $this->$key->init($param);
+            } elseif (in_array($key, self::DATA_KEY)) {
+                /**
+                 * DateTime $this->$key
+                 */
+                $this->$key->createFromFormat(DateTime::ISO8601, $param);
             } else {
                 $this->$key = $param;
             }
@@ -60,7 +76,7 @@ class Task extends SerializableObj
 
         foreach (get_object_vars($this) as $key => $var) {
             if (isset($var)) {
-                if (is_object($var)) {
+                if (in_array($key, self::OBJ_KEY)) {
                     /**
                      * SerializableObj $var
                      */
@@ -68,6 +84,11 @@ class Task extends SerializableObj
                     if (!empty($arr)) {
                         $resultArray[$key] = $var->jsonSerialize();
                     }
+                } elseif (in_array($key, self::DATA_KEY)) {
+                    /*
+                     * "errorMessages":["Поля [statusStartTime, created, updated] только для чтения."]
+                     */
+                    //$resultArray[$key] = $var->format(DateTime::ISO8601);
                 } else {
                     $resultArray[$key] = $var;
                 }
@@ -85,6 +106,16 @@ class Task extends SerializableObj
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    public function setSummery(string $value)
+    {
+        $this->summary = $value;
+    }
+
+    public function setDescription(string $value)
+    {
+        $this->description = $value;
     }
 
 

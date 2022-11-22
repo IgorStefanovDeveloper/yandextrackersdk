@@ -52,7 +52,7 @@ final class TaskManagerTest extends TestCase
         $this->assertIsArray($links, 'Не получилось получить ссылки задачи');
     }
 
-    /*
+
     public function testCreateTask()
     {
         //Создать задачу с заголовком, описанием и испольнителем.
@@ -84,7 +84,7 @@ final class TaskManagerTest extends TestCase
             $this->assertIsArray($result, 'Не получилось создать задачу');
         }
     }
-    */
+
 
     public function testEditTask()
     {
@@ -135,5 +135,30 @@ final class TaskManagerTest extends TestCase
         $prioritises = $this->taskManager->getTaskPriorities();
 
         $this->assertIsArray($prioritises, 'Не удалось получить приоритеты задач');
+    }
+
+    public function testFindTaskByQuery()
+    {
+        $queueKey = getenv('QUEUE_KEY');
+
+        $tasks = $this->taskManager->findTaskByQuery(["filter" => ["queue" => $queueKey]]);
+
+        $this->assertIsArray($tasks, 'Не удалось найти задачи');
+        $this->assertIsObject($tasks[0], "Не удалось получить объект");
+        $this->assertEquals(Task::class, get_class($tasks[0]));
+    }
+
+    public function testFindTask()
+    {
+        $queueKey = getenv('QUEUE_KEY');
+        $perPage = '2';
+        $page = '1';
+
+        $tasks = $this->taskManager->findTask($queueKey, $perPage, $page);
+
+        $this->assertIsArray($tasks, 'Не удалось найти задачи');
+        $this->assertIsObject($tasks[0], "Не удалось получить объект");
+        $this->assertEquals(Task::class, get_class($tasks[0]));
+        $this->assertCount($perPage, $tasks);
     }
 }
